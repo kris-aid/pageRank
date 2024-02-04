@@ -29,91 +29,116 @@ def create_digraph(number_of_nodes=100, number_of_edges=10):
     G.in_degree(0)  # node 0 with degree 0
     return G
 
-def draw_graph(G,pos):
-    #pos = nx.spring_layout(G,seed=9)
-    nx.draw_networkx_nodes(G, pos, node_color='r', node_size=500, alpha=0.8)
-    nx.draw_networkx_edges(G, pos=pos,
-                           edge_color='b', style='solid',
-                           width=1.0, alpha=0.5)
     
-    # node labels
-    nx.draw_networkx_labels(G, pos, font_size=20, font_family="sans-serif")
+import networkx as nx
+import matplotlib.pyplot as plt
+import random
+
+def generate_better_pos(G):
+    column_nodes = []
+    for i in range(0, len(G.nodes), 3):
+        column_nodes.append(list(G.nodes)[i:i+3:None])
     
-    # edge weight labels
+    pos = {}
+    sizes = {}
+    
+    for col_index, nodes in enumerate(column_nodes):
+        for row_index, node in enumerate(nodes):
+            pos[node] = (col_index, row_index+0.3)
+            
+            # Calculate node size based on incoming edges
+            incoming_edges = G.in_edges(node)
+            size = len(list(incoming_edges)) + 1  # You can adjust this formula as needed
+            sizes[node] = size
+    
+    return pos, sizes
+
+def draw_graph(G, pos, node_sizes):
+    #pos = nx.shell_layout(G)
+    nx.draw_networkx_nodes(G, pos, node_color='r', node_size=[node_sizes[node] * 100 for node in G.nodes], alpha=0.8)
+    nx.draw_networkx_edges(G, pos=pos, edge_color='b', style='solid', width=1.0, alpha=0.5)
+    
+    # Node labels
+    nx.draw_networkx_labels(G, pos, font_size=10, font_family="sans-serif")
+    
+    # Edge weight labels
     edge_labels = nx.get_edge_attributes(G, "weight")
-    
     nx.draw_networkx_edge_labels(G, pos, edge_labels)
-    ax = plt.gca()
-    ax.margins(0.08)
+    
     plt.axis("off")
     plt.tight_layout()
     plt.show()
+
+
     
-def generate_better_pos(G):
-    
-    column_nodes = []
-    for i in range(0, len(G.nodes),3):
-        column_nodes.append(list(G.nodes)[i:i+3:None])
-    print(column_nodes)    
-    pos = {}
-    for col_index, nodes in enumerate(column_nodes):
-        for row_index, node in enumerate(nodes):
-            pos[node] = (col_index, row_index)
-            
-            
-    return pos
-    
-def generate_graph(num_nodes, num_edges, num_spider_traps, num_dead_ends,num_important_nodes):
+def generate_graph(num_nodes, num_edges, num_spider_traps, num_dead_ends, num_important_nodes):
     # Create a directed graph
     graph = nx.DiGraph()
 
     # Add nodes
-    graph.add_nodes_from(range(num_nodes))
+    graph.add_nodes_from(range(1, num_nodes + 1))
 
-    # Add edgess
-    for _ in range(num_edges):
-        source = random.choice(range(num_nodes))
-        target = random.choice([node for node in range(num_nodes) if node != source])
-        graph.add_edge(source, target)
+    # Ensure each node has at least one incoming edge
+    for node in range(2, num_nodes + 1):
+        source = random.choice(range(1, node))
+        graph.add_edge(source, node)
 
-    # Introduce spider traps
-    for _ in range(num_spider_traps):
-        trap_node = max(graph.nodes) + 1  # Create a new node for the trap
-        graph.add_node(trap_node)
-        for node in range(num_nodes):
-            if random.random() < 0.1:  # Adjust the probability as needed
-                graph.add_edge(node, trap_node)
-                print("the next nodes are the spider traps",trap_node)
-    print("the next nodes are the spider traps",trap_node)
+    # Add remaining edges
+    # for _ in range(num_edges - num_nodes + 1):
+    #     source = random.choice(range(1, num_nodes + 1))
+    #     target = random.choice(range(1, num_nodes + 1))
+    #     graph.add_edge(source, target)
+
+   
     # Introduce dead ends
     for _ in range(num_dead_ends):
         dead_end_node = max(graph.nodes) + 1  # Create a new node for the dead end
         graph.add_node(dead_end_node)
-        source = random.choice(range(num_nodes))
+        source = random.choice(range(1, num_nodes + 1))
         graph.add_edge(source, dead_end_node)
+        print(f"Dead End: {source} -> {dead_end_node}")
+
+    # Introduce important nodes
     for _ in range(num_important_nodes):
-        important_node = max(graph.nodes) + 1
+        important_node = random.choice(range(1, num_nodes + 1))
         graph.add_node(important_node)
-        number_of_incoming_edges =4
+        number_of_incoming_edges = 4
         for _ in range(number_of_incoming_edges):
-            source = random.choice(range(num_nodes))
+            source = random.choice(range(1, num_nodes + 1))
             graph.add_edge(source, important_node)
+        print(f"Important Node: {important_node} with {number_of_incoming_edges} incoming edges")
+     # Introduce spider traps
+    for trap_index in range(num_spider_traps):
+        num_nodes_to_choose = 3
+        trap_nodes = random.sample(list(graph.nodes), num_nodes_to_choose)
+
+
+        # Add edges between chosen nodes and the trap node
+        for i in range(num_nodes_to_choose):
+            # for node in graph.neighbors(trap_nodes[i]):  
+            #     graph.remove_edge(trap_nodes[i], node)
+            graph.add_edge(trap_nodes[i], trap_nodes[i+1 if i+1 < num_nodes_to_choose else 0])
+            
+        print(f"Spider Trap {trap_index + 1}: Nodes involved - {trap_nodes}")
+
+
     return graph
+
+
 if __name__ == "__main__":
-    num_nodes = 10
-    num_edges = 10
+    num_nodes = 12
+    num_edges = 0
     num_spider_traps = 2
     num_dead_ends = 3
-    num_important_nodes=2
-    
-    generated_graph_1 = generate_graph(num_nodes, num_edges, num_spider_traps, num_dead_ends,num_important_nodes)
-    #nodes=generated_graph_1.nodes
-    pos=generate_better_pos(generated_graph_1)
-    # pos = nx.spiral_layout(generated_graph_1)
-    
-    print(pos)
-    #pos=nx.circular_layout(generated_graph_1)
-    #draw_graph(G=generated_graph_1,pos=pos)
+    num_important_nodes = 3
+
+    generated_graph = generate_graph(num_nodes, num_edges, num_spider_traps, num_dead_ends, num_important_nodes)
+    # pos = nx.spring_layout(generated_graph, seed=42)
+    # nx.draw(generated_graph, pos, with_labels=True, font_weight='bold', node_size=500)
+    # plt.show()
+    pos, node_sizes = generate_better_pos(generated_graph)
+
+    draw_graph(generated_graph, pos, node_sizes)
  
 
     
