@@ -140,5 +140,18 @@ if __name__ == "__main__":
 
     draw_graph(generated_graph, pos, node_sizes)
  
-
+    pagerank_vector = np.ones(len(generated_graph_1.nodes)) / len(generated_graph_1.nodes)
+    start_node=1
+    while True:
+            num_iterations = int(input("Enter the number of iterations (or '0' to exit): "))
+            if num_iterations == 0:
+                break  # Exit the loop if the user enters 0
+            tp=bool(input("do you want to use teleportation? "))
+            pagerank_vectors,walked_nodes, walk_rate_nodes=power_iterate(generated_graph_1, pagerank_vector, teleport=tp, start_node=start_node ,num_iterations=num_iterations)
+            
+            print("first pagerank vector:", pagerank_vectors[0])
+            print("last pagerank vector:", pagerank_vectors[-1])
+            print("start node:", walked_nodes[0])
+            print("current node:", walked_nodes[-1])
+            print("prob to enter next nodes:", walk_rate_nodes[-1])
     
