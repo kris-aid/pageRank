@@ -14,7 +14,7 @@ def weighted_adjacency_matrix(graph):
 def prob_next_nodes(graph, current_node):
     size = len(graph.nodes)
     position_vector = np.zeros(size)
-    position_vector[current_node] = 1
+    position_vector[current_node-1] = 1
     prob_next_nodes=calculate_pagerank_vector(graph,position_vector,teleport=False)
     norm=np.sum(prob_next_nodes)
     if norm == 0:
