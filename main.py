@@ -89,9 +89,9 @@ def graph_normal():
                     (9,13),(12,8),(12,10),
                     (8,1),(12,1),(12,15),
                     (3,2),(4,3),(15,5),
-                    (2,14),(14,3),(1,15),(15,4),(15,8),
-                    (4,9),(4,1),(9,1),(4,8)])
-    print("Spider Traps: Nodes involved - [3, 2, 4],[6,11,7]")
+                    (1,2),(3,14),(1,15),(15,4),(15,8),
+                    (4,9),(4,1),(9,1),(4,8),(14,3),(2,6)])
+    print("Spider Traps: Nodes involved - [3, 14],[6,11,7]")
     print("Dead End: 9 -> 13")
     print("Dead End: 12 -> 5")
     print("Dead End: 15 -> 5")
@@ -169,24 +169,32 @@ if __name__ == "__main__":
     # generated_graph = generate_graph(num_nodes, num_edges, num_spider_traps, num_dead_ends, num_important_nodes)
     
     generated_graph=graph_normal()
-    a=adjaceny_matrix(generated_graph)
-    print(a)
+    #15a=adjaceny_matrix(generated_graph)
+    #print(a)
     pos, node_sizes = generate_better_pos(generated_graph)
 
-    draw_graph(generated_graph, pos, node_sizes)
+    #draw_graph(generated_graph, pos, node_sizes)
 
     pagerank_vector = np.ones(len(generated_graph.nodes)) / len(generated_graph.nodes)
-    start_node=1
+    start_node=random.choice(list(generated_graph.nodes))
+    pagerank_vectors, walked_nodes, walk_rate_nodes = [], [], []
+    
     while True:
             num_iterations = int(input("Enter the number of iterations (or '0' to exit): "))
             if num_iterations == 0:
                 break  # Exit the loop if the user enters 0
             tp=bool(input("do you want to use teleportation? 1 is yes, 0 is no:"))
-            pagerank_vectors,walked_nodes, walk_rate_nodes=power_iterate(generated_graph, pagerank_vector, teleport=tp, start_node=start_node ,num_iterations=num_iterations)
-
-            print("first pagerank vector:", pagerank_vectors[0])
-            print("last pagerank vector:", pagerank_vectors[-1])
-            print("start node:", walked_nodes[0])
-            print("current node:", walked_nodes[-1])
-            print("prob to enter next nodes:", walk_rate_nodes[-1])
+            result_pagerank, result_walked_nodes, result_walk_rate_nodes=power_iterate(generated_graph, pagerank_vector, teleport=tp, start_node=start_node ,num_iterations=num_iterations)
+            pagerank_vectors.extend(result_pagerank)
+            walked_nodes.extend(result_walked_nodes)
+            walk_rate_nodes.extend(result_walk_rate_nodes)
+            print("pagerank vectors:", pagerank_vectors)
+            print("walked nodes:", walked_nodes)
+            print("walk rate nodes:", walk_rate_nodes)
+            
+            # print("first pagerank vector:", pagerank_vectors[0])
+            # print("last pagerank vector:", pagerank_vectors[-1])
+            # print("start node:", walked_nodes[0])
+            # print("Estas en el nodo", walked_nodes[-1], "y tienes un" )
+            # print("prob to enter next nodes:", walk_rate_nodes[-1])
 
