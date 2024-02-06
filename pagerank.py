@@ -1,15 +1,11 @@
-import networkx as nx
-import matplotlib.pyplot as plt
-import numpy as np
-import random
-
 def weighted_adjacency_matrix(graph):
     size = len(graph.nodes)
     vectors=[]
+    pagerank_vector = np.ones(len(graph.nodes))
     for node in range(1,size):
-        vectors.append(prob_next_nodes(graph,node))
-    weighted_matrix = [[vector[i] for vector in vectors] for i in range(size)]
-    return weighted_matrix
+        vectors.append(prob_next_nodes(graph,node,pagerank_vector,teleport=False))
+    weighted_matrix =  np.array(vectors)
+    return nx.from_numpy_array(weighted_matrix)
     
 def prob_next_nodes(graph, current_node, pagerank_vector, teleport):
     size = len(graph.nodes)
@@ -40,14 +36,14 @@ def random_walk(graph, start_node,pagerank_vector, teleport):
 def calculate_pagerank_vector(graph, pagerank_vector, teleport):
     alpha=0.8
     new_pagerank_vector=pagerank_vector
-    adjacency_matrix = nx.to_numpy_array(graph)
+    M = weighted_adjacency_matrix(graph)
     n = len(graph.nodes)
     if teleport:      
         damping_matrix = np.full((n, n), 1 / n)
-        M = alpha * adjacency_matrix + (1 - alpha) * damping_matrix
+        M = alpha * M + (1 - alpha) * damping_matrix
         new_pagerank_vector = M @ pagerank_vector
     else:
-        new_pagerank_vector = adjacency_matrix @ pagerank_vector
+        new_pagerank_vector = M @ pagerank_vector
 
     return new_pagerank_vector
 
