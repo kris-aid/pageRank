@@ -86,3 +86,12 @@ def power_iterate(graph, pagerank_vector, teleport, start_node,num_iterations):
         walk_rate_nodes.append(prob_next_nodes(graph, walked_nodes[-1]))
     return pagerank_vectors,walked_nodes, walk_rate_nodes,current_node
 
+def power_iterate(graph, pagerank_vector, teleport, start_node,num_iterations):
+    pagerank_vectors=[pagerank_vector]
+    walked_nodes=[start_node]
+    walk_rate_nodes=[prob_next_nodes(graph, start_node,pagerank_vector,teleport)]
+    for _ in range(num_iterations):
+        pagerank_vectors.append(calculate_pagerank_vector(graph, pagerank_vectors[-1], teleport))
+        walked_nodes.append(random_walk(graph,walked_nodes[-1],pagerank_vectors[-1],teleport))
+        walk_rate_nodes.append(prob_next_nodes(graph, walked_nodes[-1],pagerank_vectors[-1],teleport))
+    return pagerank_vectors,walked_nodes, walk_rate_nodes
