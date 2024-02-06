@@ -185,9 +185,11 @@ if __name__ == "__main__":
                 break  # Exit the loop if the user enters 0
             tp=bool(input("do you want to use teleportation? 1 is yes, 0 is no:"))
             result_pagerank, result_walked_nodes, result_walk_rate_nodes,current_node=power_iterate(generated_graph, pagerank_vector, teleport=tp, start_node=start_node ,num_iterations=num_iterations)
+            
             pagerank_vectors.extend(result_pagerank)
             walked_nodes.extend(result_walked_nodes)
             walk_rate_nodes.extend(result_walk_rate_nodes)
+            
             #print("pagerank vectors:", pagerank_vectors)
             print("walked nodes:", walked_nodes)
             #print("walk rate nodes:", walk_rate_nodes)
