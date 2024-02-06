@@ -155,13 +155,16 @@ def generate_graph(num_nodes, num_edges, num_spider_traps, num_dead_ends, num_im
 
 
     return graph
-
+def print_matrix(matrix):
+    for row in matrix:
+        for element in row:
+            print(f"{element:.2f}", end=" ")  # Adjust spacing as needed
+        print()
 
 if __name__ == "__main__":
     
     generated_graph=graph_normal()
-    a=weighted_adjacency_matrix(generated_graph)
-    print(a)
+    #a=weighted_adjacency_matrix(generated_graph)
     pos, node_sizes = generate_better_pos(generated_graph)
 
     draw_graph(generated_graph, pos, node_sizes)
