@@ -47,19 +47,12 @@ def prob_next_nodes(graph, current_node, pagerank_vector, teleport):
         else:
             return prob_next_nodes
     
-def random_walk(graph, start_node, teleport):
-    current_node=start_node
-    neighbors = list(graph.neighbors(current_node))
-    all_nodes= list(range(1,len(graph.nodes)+1))
-    if ((teleport) and (random.random()<=0.8)):
-        if neighbors:
-            current_node = random.choice(neighbors)
-        return current_node
-    else:
-    
-        if neighbors:
-            current_node = random.choice(all_nodes)
-        return current_node
+def random_walk(graph, start_node,pagerank_vector, teleport):
+
+    walk_prob=prob_next_nodes(graph, start_node, pagerank_vector, teleport)
+    current_node = random.choices(range(len(walk_prob)), weights=walk_prob)[0]
+    return current_node
+
 
 def calculate_pagerank_vector(graph, pagerank_vector, teleport):
     alpha=0.8
@@ -75,23 +68,24 @@ def calculate_pagerank_vector(graph, pagerank_vector, teleport):
 
     return new_pagerank_vector
 
-def power_iterate(graph, pagerank_vector, teleport, start_node,num_iterations):
-    pagerank_vectors=[pagerank_vector]
-    walked_nodes=[]
-    walk_rate_nodes=[prob_next_nodes(graph, start_node)]
-    for _ in range(num_iterations):
-        pagerank_vectors.append(calculate_pagerank_vector(graph, pagerank_vectors[-1], teleport))
-        current_node=random_walk(graph,start_node,teleport)
-        walked_nodes.append(current_node)
-        walk_rate_nodes.append(prob_next_nodes(graph, walked_nodes[-1]))
-    return pagerank_vectors,walked_nodes, walk_rate_nodes,current_node
+# def power_iterate(graph, pagerank_vector, teleport, start_node,num_iterations):
+#     pagerank_vectors=[pagerank_vector]
+#     walked_nodes=[]
+#     walk_rate_nodes=[prob_next_nodes(graph, start_node)]
+#     for _ in range(num_iterations):
+#         pagerank_vectors.append(calculate_pagerank_vector(graph, pagerank_vectors[-1], teleport))
+#         current_node=random_walk(graph,start_node,teleport)
+#         walked_nodes.append(current_node)
+#         walk_rate_nodes.append(prob_next_nodes(graph, walked_nodes[-1]))
+#     return pagerank_vectors,walked_nodes, walk_rate_nodes,current_node
 
 def power_iterate(graph, pagerank_vector, teleport, start_node,num_iterations):
     pagerank_vectors=[pagerank_vector]
-    walked_nodes=[start_node]
+    walked_nodes=[]
     walk_rate_nodes=[prob_next_nodes(graph, start_node,pagerank_vector,teleport)]
     for _ in range(num_iterations):
         pagerank_vectors.append(calculate_pagerank_vector(graph, pagerank_vectors[-1], teleport))
-        walked_nodes.append(random_walk(graph,walked_nodes[-1],pagerank_vectors[-1],teleport))
+        current_node=random_walk(graph,start_node,pagerank_vectors[-1],teleport)
+        walked_nodes.append(current_node)
         walk_rate_nodes.append(prob_next_nodes(graph, walked_nodes[-1],pagerank_vectors[-1],teleport))
-    return pagerank_vectors,walked_nodes, walk_rate_nodes
+    return pagerank_vectors,walked_nodes, walk_rate_nodes,current_node
