@@ -48,7 +48,7 @@ def random_walk(graph, start_node, teleport):
 def calculate_pagerank_vector(graph, pagerank_vector, teleport):
     alpha=0.8
     new_pagerank_vector=pagerank_vector
-    adjacency_matrix = nx.to_numpy_array(graph)
+    adjacency_matrix = weighted_adjacency_matrix(graph)
     n = len(graph.nodes)
     if teleport:      
         damping_matrix = np.full((n, n), 1 / n)
