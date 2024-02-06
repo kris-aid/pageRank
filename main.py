@@ -186,12 +186,11 @@ if __name__ == "__main__":
             
             #print("pagerank vectors:", pagerank_vectors)
             print("walked nodes:", walked_nodes)
-            #print("walk rate nodes:", walk_rate_nodes)
+            #print("walk rate nodes:", walk_rate_nodes) 
             start_node=current_node
             pagerank_vector=current_pagerank
             print("first pagerank vector:", pagerank_vectors[0])
             print("last pagerank vector:", pagerank_vectors[-1])
             # print("start node:", walked_nodes[0])
-            # print("Estas en el nodo", walked_nodes[-1], "y tienes un" )
-            print("prob to enter next nodes:", walk_rate_nodes[-1])
+            print("Estas en el nodo", current_node, "y tienes un", walk_rate_nodes[-1], "de probabilidad de ir al siguiente nodo")
     
