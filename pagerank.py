@@ -3,14 +3,23 @@ import matplotlib.pyplot as plt
 import numpy as np
 import random
 
+
 def weighted_adjacency_matrix(graph):
     size = len(graph.nodes)
     vectors=[]
-    for node in range(1,size):
-        vectors.append(prob_next_nodes(graph,node))
-    
-    return vectors
-    
+    for node in range(1,size+1):
+        out_edges = np.zeros(size)
+        len_out_edges = len(list(graph.out_edges(node)))
+        if len_out_edges==0:
+            out_edges[node-1]=0
+        else:
+            for edge in list(graph.out_edges(node)):
+                out_edges[edge[1]-1]=1/len_out_edges
+        vectors.append(out_edges)
+    matrix=np.array(vectors)
+    return matrix
+        
+  
 def prob_next_nodes(graph, current_node):
     size = len(graph.nodes)
     position_vector = np.zeros(size)

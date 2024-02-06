@@ -36,12 +36,14 @@ print("Important Node: 8 with 4 incoming edges")
 #         G.add_edge(node, random.choice(list(important_nodes)))
 
 # # Print edges
-edges = G.edges()
-print("Edges:")
-for edge in edges:
-    print(edge)
+# edges = G.edges()
+# print("Edges:")
+# for edge in edges:
+#     print(edge)
 
 # Draw the graph
 pos = nx.planar_layout(G)
 nx.draw(G, pos, with_labels=True, font_weight='bold', node_color='skyblue', node_size=700, arrowsize=15)
 plt.show()
+from pagerank import weighted_adjacency_matrix
+print(weighted_adjacency_matrix(G))
