@@ -169,7 +169,8 @@ if __name__ == "__main__":
     pagerank_vector = np.ones(len(generated_graph.nodes)) / len(generated_graph.nodes)
     start_node=random.choice(list(generated_graph.nodes))
     pagerank_vectors, walked_nodes, walk_rate_nodes = [], [], []
-    print(generated_graph.out_edges(1))
+    
+    walked_nodes.append(start_node)
     
     while True:
             num_iterations = int(input("Enter the number of iterations (or '0' to exit): "))

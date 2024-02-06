@@ -71,7 +71,7 @@ def calculate_pagerank_vector(graph, pagerank_vector, teleport):
 
 def power_iterate(graph, pagerank_vector, teleport, start_node,num_iterations,all_walked_nodes):
     pagerank_vectors=[pagerank_vector]
-    walked_nodes=[start_node]
+    walked_nodes=[]
     walk_rate_nodes=[prob_next_nodes(graph, start_node,pagerank_vector,teleport)]
     for _ in range(num_iterations):
         current_page_rank=calculate_pagerank_vector(graph, pagerank_vectors[-1], teleport)
