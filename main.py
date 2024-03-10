@@ -56,7 +56,7 @@ def generate_better_pos(G):
 def draw_graph(G, pos, node_sizes):
     pos=nx.planar_layout(G)
     nx.draw_networkx_nodes(G, pos,
-                           node_size=[node_sizes[node] * 100* exp(len(list(G.in_edges(node)))*0.1) for node in G.nodes],
+                           node_size=[node_sizes[node] * 150* exp(len(list(G.in_edges(node)))*0.1) for node in G.nodes],
                            alpha=0.8,
                            node_color="indigo")
     nx.draw_networkx_edges(G, pos=pos, edge_color='black', style='solid', width=1.0, alpha=0.5)
@@ -93,7 +93,7 @@ def graph_normal():
                     (4,9),(4,1),(9,1),(4,8),(14,3),(2,6)])
     print("Spider Traps: Nodes involved - [3, 14],[6,11,7]")
     print("Dead End: 9 -> 13")
-    print("Dead End: 12 -> 5")
+    print("Dead End: 12 -> 10")
     print("Dead End: 15 -> 5")
     print("Important Node: 1 with 4 incoming edges")
     print("Important Node: 8 with 4 incoming edges")
@@ -161,8 +161,33 @@ def print_matrix(matrix):
             print(f"{element:.2f}", end=" ")  # Adjust spacing as needed
         print()
 
+def create_graph():
+    G = nx.DiGraph()
+
+    # Add nodes
+    G.add_nodes_from(range(1, 6))
+
+    # Add fully connected edges
+    for i in range(1, 6):
+        for j in range(1, 6):
+            if i != j:
+                G.add_edge(i, j)
+
+    # Add two nodes with many in-edges
+    G.add_edges_from([(7, i) for i in range(1, 6)])
+
+    # Create dead ends
+    G.add_edge(8, 9)
+    G.add_edge(10, 11)
+
+    # Create spider trap
+    G.add_edges_from([(12, i) for i in range(10, 16)])
+
+    return G
+
 if __name__ == "__main__":
     
+    #generated_graph=generate_graph(15, 20, 2, 3, 2)
     generated_graph=graph_normal()
     #a=weighted_adjacency_matrix(generated_graph)
     pos, node_sizes = generate_better_pos(generated_graph)
@@ -196,4 +221,10 @@ if __name__ == "__main__":
             print("last pagerank vector:", pagerank_vectors[-1])
             # print("start node:", walked_nodes[0])
             print("Estas en el nodo", current_node, "y tienes un", walk_rate_nodes[-1], "de probabilidad de ir al siguiente nodo")
+            #See if the walked nodes have al the nodes of the graph:
+            if set(generated_graph.nodes).issubset(walked_nodes):
+                print("transversal complete")
+                False
+                
+            
     
