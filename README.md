@@ -4,9 +4,9 @@ Trabajo de PageRank para la materia de Data Mining
 
 ## Integrantes
 
-- [x] **Sebastián Romero** 
-- [x] **Juan Calderón**
-- [x] ** Kristian Mendoza**
+-  **Sebastián Romero** 
+- **Juan Calderón**
+- **Kristian Mendoza**
 
 ## Descripción
 
