@@ -44,8 +44,8 @@ def random_walk(graph, start_node,pagerank_vector, teleport,walked_nodes):
     
     walk_prob=prob_next_nodes(graph, start_node, pagerank_vector, teleport)
     for node in walked_nodes:
-        walk_prob[node - 1] = 0
-    print("test prob",walk_prob)
+       walk_prob[node - 1] = 0
+    #print("test prob",walk_prob)
     if any(weight != 0 for weight in walk_prob):
         current_node = random.choices(range(len(walk_prob)), weights=walk_prob)[0]
         current_node= current_node+1
@@ -61,12 +61,13 @@ def calculate_pagerank_vector(graph, pagerank_vector, teleport):
     n = len(graph.nodes)
     if teleport:      
         damping_matrix = np.full((n, n), 1 / n)
+        #Multiplied by the transpose of the damping matrix
         M = alpha * M + (1 - alpha) * damping_matrix
-        new_pagerank_vector = M @ pagerank_vector
+        new_pagerank_vector = M.T @ pagerank_vector
     else:
-        new_pagerank_vector = M @ pagerank_vector
+        new_pagerank_vector = M.T @ pagerank_vector
     if np.linalg.norm(new_pagerank_vector - pagerank_vector, 1) < 1e-6:
-        print("convergence achieved")
+        print("convergence achieved") 
     return new_pagerank_vector
 
 def power_iterate(graph, pagerank_vector, teleport, start_node,num_iterations,all_walked_nodes):
@@ -74,9 +75,9 @@ def power_iterate(graph, pagerank_vector, teleport, start_node,num_iterations,al
     walked_nodes=[]
     walk_rate_nodes=[prob_next_nodes(graph, start_node,pagerank_vector,teleport)]
     for _ in range(num_iterations):
-        current_page_rank=calculate_pagerank_vector(graph, pagerank_vectors[-1], teleport)
+        current_page_rank=calculate_pagerank_vector(graph, pagerank_vector, teleport)
         pagerank_vectors.append(current_page_rank)
-        current_node=random_walk(graph,start_node,pagerank_vectors[-1],teleport,all_walked_nodes)
+        current_node=random_walk(graph,start_node,pagerank_vector,teleport,all_walked_nodes)
         walked_nodes.append(current_node)
-        walk_rate_nodes.append(prob_next_nodes(graph, walked_nodes[-1],pagerank_vectors[-1],teleport))
+        walk_rate_nodes.append(prob_next_nodes(graph,current_node,pagerank_vector,teleport))
     return pagerank_vectors,walked_nodes, walk_rate_nodes,current_node,current_page_rank
